@@ -61,17 +61,16 @@ function mapWeatherCondition(weatherMain: string, description: string): string {
   if (main === "dust" || main === "sand" || main === "ash") return "windy"
   if (main === "squall" || main === "tornado") return "windy"
 
-  return "sunny" // default fallback
+  return "sunny"
 }
 
 export async function GET() {
   try {
-    // Fetch weather data for all cities in parallel
     const weatherPromises = cities.map(async (city) => {
       try {
         const response = await fetch(
           `${OPENWEATHER_BASE_URL}/weather?lat=${city.lat}&lon=${city.lon}&appid=${OPENWEATHER_API_KEY}&units=metric`,
-          { next: { revalidate: 300 } }, // Cache for 5 minutes
+          { next: { revalidate: 300 } },
         )
 
         if (!response.ok) {
@@ -88,17 +87,16 @@ export async function GET() {
           temperature: Math.round(data.main.temp),
           condition: mapWeatherCondition(data.weather[0].main, data.weather[0].description),
           humidity: data.main.humidity,
-          windSpeed: Math.round(data.wind.speed * 3.6), // Convert m/s to km/h
+          windSpeed: Math.round(data.wind.speed * 3.6),
           pressure: data.main.pressure,
           feelsLike: Math.round(data.main.feels_like),
-          uvIndex: 0, // UV index requires separate API call
-          visibility: Math.round(data.visibility / 1000), // Convert meters to km
+          uvIndex: 0, 
+          visibility: Math.round(data.visibility / 1000), 
           description: data.weather[0].description,
-          lastUpdated: data.dt ? new Date(data.dt * 1000) : new Date(),
+          lastUpdated: new Date(data.dt * 1000),
         }
       } catch (error) {
         console.error(`Error fetching weather for ${city.name}:`, error)
-        // Return fallback data for this city
         return {
           id: `${city.name.toLowerCase().replace(/\s+/g, "-")}`,
           name: city.name,

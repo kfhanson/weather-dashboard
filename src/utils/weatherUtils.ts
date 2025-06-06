@@ -115,7 +115,6 @@ export function getTextColor(condition: string): string {
   const weatherCondition = weatherConditions[condition]
   if (!weatherCondition) return "text-black"
 
-  // Determine if we need light or dark text based on background
   const darkBackgrounds = ["stormy", "cloudy", "rainy"]
   return darkBackgrounds.includes(condition) ? "text-white" : "text-black"
 }
@@ -131,7 +130,7 @@ export function getTemperatureColor(temp: number): string {
 export async function fetchWeatherData(): Promise<CityWeather[]> {
   try {
     const response = await fetch("/api/weather", {
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      next: { revalidate: 300 }, 
     })
 
     if (!response.ok) {
@@ -139,12 +138,8 @@ export async function fetchWeatherData(): Promise<CityWeather[]> {
     }
 
     const data = await response.json()
+    return data
 
-    // Ensure lastUpdated is a proper Date object
-    return data.map((city: any) => ({
-      ...city,
-      lastUpdated: city.lastUpdated ? new Date(city.lastUpdated) : new Date(),
-    }))
   } catch (error) {
     console.error("Error fetching weather data:", error)
     // Return fallback data if API fails

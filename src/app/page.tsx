@@ -18,7 +18,6 @@ export default function WeatherDashboard() {
   const containerRef = useRef<HTMLDivElement>(null)
   const lastOffsetRef = useRef(0)
 
-  // Check online status
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
     const handleOffline = () => setIsOnline(false)
@@ -32,18 +31,16 @@ export default function WeatherDashboard() {
     }
   }, [])
 
-  // Load initial weather data
   useEffect(() => {
     loadWeatherData()
   }, [])
 
-  // Auto-refresh weather data every 5 minutes
   useEffect(() => {
     const timer = setInterval(() => {
       if (!isDragging && isOnline) {
-        loadWeatherData(false) // Silent refresh
+        loadWeatherData(false)
       }
-    }, 300000) // 5 minutes
+    }, 300000)
 
     return () => clearInterval(timer)
   }, [isDragging, isOnline])
@@ -176,7 +173,6 @@ export default function WeatherDashboard() {
       onTouchEnd={handleTouchEnd}
       aria-label="Weather dashboard"
     >
-      {/* Background gradients */}
       <div className="absolute inset-0 flex flex-col md:flex-row w-full h-full">
         {weatherData.map((city) => {
           const cityColor = cityColors.find((cc) => cc.cityId === city.id)
@@ -193,9 +189,7 @@ export default function WeatherDashboard() {
         })}
       </div>
 
-      {/* Top status bar */}
       <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center">
-        {/* Connection status */}
         <div className="flex items-center space-x-2">
           {isOnline ? <Wifi className="w-4 h-4 text-white/70" /> : <WifiOff className="w-4 h-4 text-red-400" />}
           <p className="text-white/70 text-xs bg-black/20 backdrop-blur-sm rounded-full px-3 py-1">
@@ -205,7 +199,6 @@ export default function WeatherDashboard() {
           </p>
         </div>
 
-        {/* Refresh button */}
         <button
           onClick={refreshWeatherData}
           disabled={isRefreshing || !isOnline}
@@ -216,7 +209,6 @@ export default function WeatherDashboard() {
         </button>
       </div>
 
-      {/* Error message */}
       {error && (
         <div className="absolute top-16 left-4 right-4 z-20">
           <div className="bg-red-500/90 backdrop-blur-sm rounded-lg p-3 flex items-center space-x-2">
@@ -226,7 +218,6 @@ export default function WeatherDashboard() {
         </div>
       )}
 
-      {/* Weather data overlay */}
       <div className="absolute inset-0 flex items-stretch md:items-center justify-center pointer-events-none">
         <div className="flex flex-col md:flex-row w-full h-full md:h-auto">
           {weatherData.map((city) => {
@@ -242,7 +233,6 @@ export default function WeatherDashboard() {
                 }}
               >
                 <div className="relative z-10 w-full h-full flex items-center md:flex-col md:items-center justify-between md:justify-center">
-                  {/* Mobile layout */}
                   <div className="md:hidden flex items-center justify-between w-full">
                     <div className="flex items-center space-x-3">
                       <WeatherIcon className={`w-6 h-6 ${textColor}`} />
@@ -270,7 +260,6 @@ export default function WeatherDashboard() {
                     </div>
                   </div>
 
-                  {/* Desktop layout */}
                   <div className="hidden md:flex md:flex-col md:items-center md:space-y-1">
                     <WeatherIcon className={`w-8 h-8 ${textColor} mb-1`} />
 
@@ -295,7 +284,6 @@ export default function WeatherDashboard() {
                     <p className={`${textColor} text-[8px] opacity-60`}>Feels {city.feelsLike}°</p>
                   </div>
 
-                  {/* Additional weather info on mobile */}
                   <div className="md:hidden flex items-center space-x-4 mt-2">
                     <div className="flex items-center space-x-1">
                       <Droplets className={`w-3 h-3 ${textColor} opacity-75`} />
@@ -313,7 +301,6 @@ export default function WeatherDashboard() {
         </div>
       </div>
 
-      {/* Bottom info bar for desktop */}
       <div className="absolute bottom-0 left-0 right-0 hidden md:flex justify-center pb-2">
         {weatherData.map((city) => {
           const textColor = getTextColor(city.condition)
